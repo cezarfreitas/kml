@@ -1,5 +1,24 @@
 #!/bin/bash
 
+echo "🔧 Atualizando Node.js e configurando deploy..."
+
+# 1. Atualizar Node.js para versão 18
+echo "📦 Instalando Node.js 18..."
+curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+apt-get install -y nodejs
+
+# Verificar versão
+echo "✅ Nova versão do Node.js:"
+node --version
+npm --version
+
+# 2. Criar diretório scripts se não existir
+mkdir -p /code/scripts
+
+# 3. Criar script de deploy
+cat > /code/scripts/deploy.sh << 'EOF'
+#!/bin/bash
+
 # Script de Deploy - Sistema de Mapas
 echo "🚀 Iniciando deploy do Maps Region System..."
 
@@ -9,14 +28,6 @@ cd /code
 # Verificar se o diretório existe
 if [ ! -d "/code" ]; then
     echo "❌ Erro: Diretório /code não encontrado!"
-    exit 1
-fi
-
-# Verificar versão do Node.js
-NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
-if [ "$NODE_VERSION" -lt 18 ]; then
-    echo "❌ Erro: Node.js versão $NODE_VERSION detectada. Versão >= 18 é necessária."
-    echo "🔧 Execute: bash fix-node-version.sh"
     exit 1
 fi
 
@@ -83,3 +94,21 @@ echo "🧹 Limpeza final..."
 rm -rf /code/backup
 
 echo "🎉 Deploy finalizado!"
+EOF
+
+# 4. Tornar script executável
+chmod +x /code/scripts/deploy.sh
+
+# 5. Limpar e reinstalar dependências com Node.js 18
+cd /code
+rm -rf node_modules package-lock.json
+npm cache clean --force
+
+echo "🔨 Instalando dependências com Node.js 18..."
+npm install
+
+echo "🏗️ Fazendo build da aplicação..."
+npm run build
+
+echo "✅ Configuração concluída!"
+echo "🚀 Para fazer deploy, execute: /code/scripts/deploy.sh"
