@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  maps-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyAx7pp7zNpmxL05hJi-LCAMAYudm7kuCP4
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    networks:
+      - maps-network
+
+networks:
+  maps-network:
+    driver: bridge
+
+volumes:
+  maps-data:

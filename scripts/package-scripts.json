@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "deploy": "bash scripts/deploy.sh",
+    "health": "bash scripts/health-check.sh",
+    "rollback": "bash scripts/rollback.sh",
+    "logs": "tail -f /var/log/nextjs-server.log",
+    "status": "supervisorctl status nextjs-server"
+  }
+}
